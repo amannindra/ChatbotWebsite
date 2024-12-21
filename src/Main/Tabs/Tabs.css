@@ -1,0 +1,35 @@
+.tabs {
+  display: flex;
+  height: 5vh;
+  background-color: var(--side_gray);
+  width: 100%;
+  justify-content: space-between;
+  img {
+    height: 80%;
+    border-radius: 50%;
+  }
+  .left {
+    position: relative;
+    left: 1rem;
+    width: 5rem;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    :hover {
+      background-color: red;
+      cursor: pointer;
+    }
+  }
+  .right {
+    position: relative;
+    right: 1rem;
+    width: 5rem;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
