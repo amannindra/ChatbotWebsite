@@ -37,12 +37,12 @@ function Chat(props) {
   }, []);
 
   const handleSend = async () => {
-    // if (!props.isSignedIn) {
-    //   alert("Please sign in Chat.jsx");
-    //   setuserText("");
-    //   return;
-    // }
-
+    if (!props.isSignedIn) {
+      alert("Please sign in Chat.jsx");
+      setuserText("");
+      return;
+    }
+    
     if (userText.trim() === "") {
       return;
     }

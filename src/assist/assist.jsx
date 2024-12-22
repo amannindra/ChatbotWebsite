@@ -64,8 +64,13 @@ function assist(props) {
   // };
 
   const newConvervation = async () => {
-    var tit  = await addChatbot();
-    setTitles([...titles, tit]);
+    if(!props.isSignedIn){
+      var tit  = await addChatbot();
+      setTitles([...titles, tit]);
+    }
+    else{
+      console.log("You need to sign in!!  ")
+    } 
   };
 
   return (
@@ -102,14 +107,3 @@ function assist(props) {
 }
 
 export default assist;
-{
-  /* <div className="section">
-            <p>React menu animation</p>
-          </div>
-          <div className="section">
-            <p>React menu animation </p>
-          </div>
-          <div className="section">
-            <p>React menu animation</p>
-          </div> */
-}
