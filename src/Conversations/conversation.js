@@ -15,45 +15,53 @@ import {
 
 
 
-var data = "ds";
-var useText = "hi";
-import axios from "axios";
+
+
+
+
 var bot = [
-  
 ];
+
+var SignedInData;
+var displayName;
+var email;
+var UID;
+var userPhoto;
+
+
+
 const db = getFirestore(app);
 const storage = getStorage(app);
 const userDataRef = ref(storage, "user");
-
-//const spaceRef = ref(storage, 'images/space.jpg');
-
-// const imageRef = spaceRef.parent;
-// imageRef now foceses on 'images'
-
-// const rootRef = spaceRef.root;
-// rootref now points to the root
-
-//spaceRef.fullpath give 'images/space.jpg'0
-
-var UID = "";
-
-export async function uploadUserId(user) {
-  UID = user;
-  return UID;
-}
 
 export async function getUserId() {
   return UID;
 }
 
-export async function getResponce(title, userText) {
-  // console.log("Title to getResponce Function:", title);
-  // console.log("User input to getResponce Function:", userText);
+export async function getUserPhoto(){
+  return userPhoto;
+}
 
+export async function getDisplayName(){
+  return displayName;
+}
+export async function getEmail(){
+  return email;
+}
+
+
+export async function uploadSignInData(data) {
+  SignedInData = data;
+  UID = data.uid;
+  displayName = data.displayName;
+  email = data.email;
+  userPhoto = data.photoURL;
+}
+
+export async function getResponce(title, userText) {
   if (!title || !userText) {
     return "Please provide a chatbot title";
   }
-
   const conv = getChatbot(title);
   try {
     const options = {
@@ -106,7 +114,6 @@ export function getChatbot(title) {
   // return botObj.conversations;
 } 
 export async function addChatbot() {
-  // alealert("here");
   var currentTitles = await retrieveTitles();
     if (currentTitles.length == 0) {
       console.log("No conversation found");
@@ -114,6 +121,10 @@ export async function addChatbot() {
         title: "conversation 1",
         conversations: [],
       });
+
+
+
+
       return "conversation 1";
     }
     else{
@@ -125,7 +136,6 @@ export async function addChatbot() {
       });
       return newTitle;
     }
-
 }
 
 export async function updateChatbot(title, newMessage) {

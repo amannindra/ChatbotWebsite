@@ -5,7 +5,6 @@ import Tabs from "./Tabs/Tabs";
 import { useState } from "react";
 
 function Main(props) {
-  const [userData, setUserData] = useState();
 
   return (
     <>
@@ -13,8 +12,7 @@ function Main(props) {
         <Tabs
           isSignedIn={props.isSignedIn}
           setIsSignedIn={props.setIsSignedIn}
-          userData={userData}
-          setUserData={setUserData}
+          
         />
         <div className="chat-container">
           <Chat
@@ -22,8 +20,6 @@ function Main(props) {
             setIsSignedIn={props.setIsSignedIn}
             currentConversation={props.currentConversation}
             setCurrentConversation={props.setCurrentConversation}
-            userData={userData}
-            setUserData={setUserData}
           />
         </div>
       </div>

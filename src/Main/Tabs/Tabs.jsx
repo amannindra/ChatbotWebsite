@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { doSignInWithGoogle } from "../../firebase/auth";
 import { useAuth } from "../../firebase/useAuth";
 
-import { uploadUserId } from "../../Conversations/conversation";
+import {uploadSignInData, getUserPhoto } from "../../Conversations/conversation";
 
 function Tabs(props) {
   const { userLoginIn } = useAuth();
@@ -33,10 +33,7 @@ function Tabs(props) {
       try {
         const googleResults = await doSignInWithGoogle();
         props.setIsSignedIn(true);
-        props.setUserData(googleResults.user);
-        console.log(`Data: ${googleResults.user}`);
-
-        const id = uploadUserId(googleResults.user.uid);
+        uploadSignInData(googleResults.user);
       } catch (err) {
         console.error("Error signing in with Google:", err);
         props.setIsSignedIn(false);
@@ -45,13 +42,10 @@ function Tabs(props) {
   };
 
   useEffect(() => {
-    if (props.userData) {
-      console.log(`User Data:`, props.userData);
-      setUserImage(props.userData.photoURL);
-
+    if(props.isSignedIn){
+      setUserImage(getUserPhoto())
     }
-    // console.log(`Is logged in: ${props.isSignedIn}`);
-  }, [props.userData, props.isSignedIn]);
+  }, [props.isSignedIn]);
 
  
 
