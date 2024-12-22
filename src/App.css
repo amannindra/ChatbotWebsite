@@ -18,8 +18,16 @@
   font-weight: normal;
   font-style: italic;
 } */
-
+/*
+@font-face {
+  font-family: "Google Sans Mono";
+  src: url("fonts/Google-Sans-Mono-Bold.ttf") format("truetype");
+  font-weight: bold;
+  font-style: italic;
+}
+*/
 * {
+
   margin: 0;
   outline: 0;
 }
