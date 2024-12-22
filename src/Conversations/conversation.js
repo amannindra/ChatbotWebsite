@@ -13,50 +13,13 @@ import {
   getFirestore,
 } from "firebase/firestore";
 
+
+
 var data = "ds";
 var useText = "hi";
 import axios from "axios";
 var bot = [
-  {
-    title: "conversation 1",
-    conversations: [
-      { role: "user", parts: [{ text: "Hi" }] },
-      {
-        role: "model",
-        parts: [{ text: "Hello! How can I assist you today? Conversation 1" }],
-      },
-    ],
-  },
-  {
-    title: "conversation 2",
-    conversations: [
-      { role: "user", parts: [{ text: "Hi" }] },
-      {
-        role: "model",
-        parts: [{ text: "Hello! How can I assist you today? Conversation 2" }],
-      },
-    ],
-  },
-  {
-    title: "conversation 3",
-    conversations: [
-      { role: "user", parts: [{ text: "Hi" }] },
-      {
-        role: "model",
-        parts: [{ text: "Hello! How can I assist you today? Conversation 3" }],
-      },
-    ],
-  },
-  {
-    title: "conversation 4",
-    conversations: [
-      { role: "user", parts: [{ text: "Hi" }] },
-      {
-        role: "model",
-        parts: [{ text: "Hello! How can I assist you today? Converation 4" }],
-      },
-    ],
-  },
+  
 ];
 const db = getFirestore(app);
 const storage = getStorage(app);
@@ -146,9 +109,15 @@ export async function addChatbot() {
   // alealert("here");
   var currentTitles = await retrieveTitles();
     if (currentTitles.length == 0) {
+      console.log("No conversation found");
+      bot.push({
+        title: "conversation 1",
+        conversations: [],
+      });
       return "conversation 1";
     }
     else{
+      console.log("Conversation found!!");
       var newTitle = "conversation " + (currentTitles.length + 1);
       bot.push({
         title: newTitle,

@@ -10,7 +10,7 @@ import Assist from "./assist/assist";
 
 function App() {
   const [currentConversation, setCurrentConversation] = useState("");
-  const [isSignedIn, setIsSignedIn] = useState(true);
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
   return (
     <>

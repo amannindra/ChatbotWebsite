@@ -29,19 +29,19 @@ function Tabs(props) {
 
   const GoogleSignIn = async (e) => {
     e.preventDefault();
-    // if (!props.isSignedIn) {
-    //   try {
-    //     const googleResults = await doSignInWithGoogle();
-    //     props.setIsSignedIn(true);
-    //     props.setUserData(googleResults.user);
-    //     console.log(`Data: ${googleResults.user}`);
+    if (!props.isSignedIn) {
+      try {
+        const googleResults = await doSignInWithGoogle();
+        props.setIsSignedIn(true);
+        props.setUserData(googleResults.user);
+        console.log(`Data: ${googleResults.user}`);
 
-    //     const id = uploadUserId(googleResults.user.uid);
-    //   } catch (err) {
-    //     console.error("Error signing in with Google:", err);
-    //     props.setIsSignedIn(false);
-    //   }
-    // }
+        const id = uploadUserId(googleResults.user.uid);
+      } catch (err) {
+        console.error("Error signing in with Google:", err);
+        props.setIsSignedIn(false);
+      }
+    }
   };
 
   useEffect(() => {
