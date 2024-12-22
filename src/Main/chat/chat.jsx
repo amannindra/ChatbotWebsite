@@ -13,6 +13,8 @@ import {
   getChatbot,
   addChatbot,
   updateChatbot,
+  getLatestUserMessage,
+  getLatestModelMessage
 } from "../../Conversations/conversation.js";
 import { useAuthState } from "react-firebase-hooks/auth";
 
@@ -42,19 +44,14 @@ function Chat(props) {
       setuserText("");
       return;
     }
-    
+
     if (userText.trim() === "") {
       return;
     }
-
-    let convId = conversationId;
-
+    var conv2;
     if (!props.currentConversation) {
       console.log("There isn't a current conversation");
-      let titles = retrieveTitles();
       let newConvervation = addChatbot();
-      var conv2;
-
       props.setCurrentConversation(newConvervation);
       await handleAI(newConvervation);
       conv2 = getChatbot(newConvervation);
@@ -63,8 +60,6 @@ function Chat(props) {
       await handleAI(props.currentConversation);
       conv2 = getChatbot(props.currentConversation);
     }
-
-    setChatHistory(conv2);
     setuserText("");
   };
   ``;
@@ -76,9 +71,16 @@ function Chat(props) {
     );
 
     await getResponce(curConveration, userText);
+    var umesssage = getLatestUserMessage();
+    var mmesssage = getLatestModelMessage();
+    umesssage.then(function(result){
+      setChatHistory([...result]);
 
-    const updatedChatHistory = getChatbot(curConveration);
-    setChatHistory([...updatedChatHistory]);
+    });
+    mmesssage.then(function(result){
+      setChatHistory([...result]);
+    });
+
     // setChatHistory([...userInput]);
     // setChatHistory([...modelInput]);
     // console.log(chatHistory);
@@ -98,6 +100,7 @@ function Chat(props) {
   // }, [chatHistory]);
 
   return (
+    
     <div className="center">
       <div className="chat">
         <div className="chatText">
@@ -141,6 +144,7 @@ function Chat(props) {
           <img src={Photo} />
         </div>
       </div>
+
     </div>
   );
 }
