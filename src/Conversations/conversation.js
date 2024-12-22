@@ -13,6 +13,8 @@ import {
   getFirestore,
 } from "firebase/firestore";
 
+
+
 var data = "ds";
 var useText = "hi";
 import axios from "axios";
@@ -44,16 +46,6 @@ var bot = [
       {
         role: "model",
         parts: [{ text: "Hello! How can I assist you today? Conversation 3" }],
-      },
-    ],
-  },
-  {
-    title: "conversation 4",
-    conversations: [
-      { role: "user", parts: [{ text: "Hi" }] },
-      {
-        role: "model",
-        parts: [{ text: "Hello! How can I assist you today? Converation 4" }],
       },
     ],
   },
