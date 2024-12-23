@@ -49,56 +49,42 @@ function Chat(props) {
       return;
     }
     var conv2;
+
     if (!props.currentConversation) {
       console.log("There isn't a current conversation");
-      let newConvervation = addChatbot();
+      let newConvervation = await addChatbot();
       props.setCurrentConversation(newConvervation);
+      console.log(`updated props.currentConversation: ${props.currentConversation}`);
       await handleAI(newConvervation);
-      conv2 = getChatbot(newConvervation);
+
+      
     } else {
-      console.log("There is a current conversation");
+      console.log("CURRENT conversation");
       await handleAI(props.currentConversation);
-      conv2 = getChatbot(props.currentConversation);
+
     }
     setuserText("");
   };
-  ``;
 
-  const handleAI = async (curConveration) => {
-    props.setCurrentConversation(curConveration);
-    console.log(
-      "This is the current Conversation title in handleAI: " + curConveration
-    );
+  const summarize = ()=>{
+    console.log("Summarize: " + JSON.stringify(getChatbot(props.currentConversation)));
+  }
 
-    await getResponce(curConveration, userText);
-    var umesssage = getLatestUserMessage();
-    var mmesssage = getLatestModelMessage();
-    umesssage.then(function(result){
-      setChatHistory([...result]);
-
-    });
-    mmesssage.then(function(result){
-      setChatHistory([...result]);
-    });
-
-    // setChatHistory([...userInput]);
-    // setChatHistory([...modelInput]);
-    // console.log(chatHistory);
+  const handleAI = async (conversationTitle) => {
+    await getResponce(conversationTitle, userText);
   };
 
   //Get the AI responce, and then the backend update reponse.
   useEffect(() => {
-    var conv = getChatbot(props.currentConversation);
-    setChatHistory(conv);
+    if(props.currentConversation){
+      var conv = getChatbot(props.currentConversation);
+      setChatHistory(conv);
+    }
+    else{
+      console.log("Not updating the currentConversation");
+    }
   }, [props.currentConversation]);
-
-  // useEffect(() => {
-  //   if (chatContainerRef.current) {
-  //     chatContainerRef.current.scrollTop =
-  //       chatContainerRef.current.scrollHeight;
-  //   }
-  // }, [chatHistory]);
-
+  
   return (
     
     <div className="center">

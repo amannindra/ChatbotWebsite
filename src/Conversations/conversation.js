@@ -97,7 +97,6 @@ export async function getResponce(title, userText) {
 }
 
 export async function getLatestUserMessage(){
-  
   return latestUserInput;
 }
 export async function getLatestModelMessage(){
