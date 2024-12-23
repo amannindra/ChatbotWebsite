@@ -12,13 +12,6 @@ import {
   Timestamp,
   getFirestore,
 } from "firebase/firestore";
-
-
-
-
-
-
-
 var bot = [
 ];
 
@@ -27,8 +20,8 @@ var displayName;
 var email;
 var UID;
 var userPhoto;
-
-
+var latestUserInput;
+var latestModelInput;
 
 const db = getFirestore(app);
 const storage = getStorage(app);
@@ -87,9 +80,13 @@ export async function getResponce(title, userText) {
       role: "model",
       parts: [{ text: data }],
     };
+    latestUserInput = userInput;
+    latestModelInput = modelInput;
+    console.log(`latestUserInput from getResponce: ${JSON.stringify(latestUserInput)}`);
+    console.log(`latestModelInput from getResponce: ${JSON.stringify(latestModelInput)}`);
 
     console.log(
-      "This is the current converation title in getResponce function: " + title
+      "This is the current converation title in getResponce function: " + JSON.stringify(title)
     );
     updateChatbot(title, userInput);
     updateChatbot(title, modelInput);
@@ -97,6 +94,14 @@ export async function getResponce(title, userText) {
     console.error(error);
     alert("Gemini Error");
   }
+}
+
+export async function getLatestUserMessage(){
+  return latestUserInput;
+}
+export async function getLatestModelMessage(){
+  alert(latestModelInput);
+  return latestModelInput;
 }
 
 export function getChatbot(title) {
@@ -121,10 +126,6 @@ export async function addChatbot() {
         title: "conversation 1",
         conversations: [],
       });
-
-
-
-
       return "conversation 1";
     }
     else{

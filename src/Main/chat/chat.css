@@ -7,6 +7,16 @@
   gap: 3vh;
   width: 50vw;
 
+
+  .what_chat{
+    position: absolute;
+    left: 50%;
+    top:5%;
+    color: white;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
+  }
+
   .chat {
     height: 100%;
     width: 100%;

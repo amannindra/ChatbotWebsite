@@ -46,6 +46,7 @@ function assist(props) {
     //   setTitles(tit);
     // }
     // alert("assist.jsx 2nd");
+
     var tit = retrieveTitles();
     tit.then(function(result){
       setTitles(result);
@@ -55,13 +56,8 @@ function assist(props) {
 
   const updateCurrentConv = (miniTitle) => {
     // console.log(`putConversation: ${miniTitle}`);
-    console.log(`current Conversatio is updated to ${miniTitle}`);
     props.setCurrentConversation(miniTitle);
   };
-
-  // const updateTitles = (titles) => {
-  //   setTitles((prev) => [...titles]);
-  // };
 
   const newConvervation = async () => {
     if(!props.isSignedIn){
