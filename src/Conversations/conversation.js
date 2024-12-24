@@ -100,7 +100,6 @@ export async function getLatestUserMessage(){
   return latestUserInput;
 }
 export async function getLatestModelMessage(){
-  alert(latestModelInput);
   return latestModelInput;
 }
 

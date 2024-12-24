@@ -1,6 +1,6 @@
 import "./Tabs.css";
 import Add from "./Images/plus.svg";
-import User from "./Images/user.png";
+import User from "./Images/users.png";
 import { useState, useEffect } from "react";
 import { doSignInWithGoogle } from "../../firebase/auth";
 import { useAuth } from "../../firebase/useAuth";
