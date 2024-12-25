@@ -1,5 +1,5 @@
 import { app } from "../firebase/FireBase";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, getStorage, ref, uploadBytes, listAll } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import {
   collection,
@@ -12,6 +12,10 @@ import {
   Timestamp,
   getFirestore,
 } from "firebase/firestore";
+import cors from "cors";
+import { useId } from "react";
+
+
 var bot = [
 ];
 
@@ -42,6 +46,24 @@ export async function getEmail(){
   return email;
 }
 
+export async function checkIfUserIsPresent(){
+  console.log("Checking if user is present");
+  const userFolder = ref(storage, "collections");
+  
+  //items are individual files
+  //prefixes are folders
+  listAll(userFolder).then((res)=>
+  {
+    res.prefixes. forEach((folderRef) => {
+      if(folderRef.name == UID){
+        return true;
+      }
+    });  
+  }).catch((error) => {
+    console.error(error);
+  });
+  return false;
+}
 
 export async function uploadSignInData(data) {
   SignedInData = data;
@@ -104,22 +126,55 @@ export async function getLatestModelMessage(){
 }
 
 export function getChatbot(title) {
-  const botObj = bot.find((b) => b.title === title);
-  // currentConversations = botObj;
-  if (!botObj) {
-    // console.error(
-    //   `Aman put this error: Conversation - No chatbot found for title: ${title}`
-    // );
+  const storageRef = ref(storage, "collections/" + UID + "/" + title);
+    console.log("StorageRef: collections/" + UID + "/" + title);
+    getDownloadURL(storageRef).then((url) => {
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          return data;
+        });
+    }).catch((error) => {
+      console.error(error);
+      switch (error.code) {
+        case 'storage/object-not-found':
+          // File doesn't exist
+          break;
+        case 'storage/unauthorized':
+          // User doesn't have permission to access the object
+          break;
+        case 'storage/canceled':
+          // User canceled the upload
+          break;
+        // ...
+        case 'storage/unknown':
+          // Unknown error occurred, inspect the server response
+          break;
+      }
+    });
     return [];
-  }
-  // console.log(`returning to react:  + ${JSON.stringify(botObj.conversations)}`);
-  return botObj.conversations;
+   
 
-  // return botObj.conversations;
+    //  const botObj = bot.find((b) => b.title === title);
+    // if (!botObj) {
+      
+    //   return [];
+    // }
+    // return botObj.conversations;
+
 } 
 export async function addChatbot() {
   var currentTitles = await retrieveTitles();
-    if (currentTitles.length == 0) {
+    console.log("Current Titles: " + currentTitles);
+    if (currentTitles.length == 0 && UID) {
+      const path = "collections/" + UID + "/" + "conversation 1";
+      const storageRef = ref(storage, path);
+      const result = await uploadBytes(storageRef, new Blob([JSON.stringify([])], {type: "application/json"}))
+      .then((snapshot) => {
+        console.log("Uploaded the first conversation: " + path);
+      
+      });
       console.log("No conversation found");
       bot.push({
         title: "conversation 1",
@@ -128,13 +183,25 @@ export async function addChatbot() {
       return "conversation 1";
     }
     else{
+      if(!UID){
+        console.log("(addchatbot) User is not signed in");
+        return;
+      }
       console.log("Conversation found!!");
-      var newTitle = "conversation " + (currentTitles.length + 1);
+      var newTitles = "conversation " + (currentTitles.length + 1);
+      // alert("New Title and UID: " + newTitles, UID);
+      const path = "collections/" + UID + "/" + newTitles;
+      const storageRef = ref(storage, path);
+      const result = await uploadBytes(storageRef, new Blob([JSON.stringify([])], {type: "application/json"}))
+      .then((snapshot) => {
+        console.log("Uploaded a new conversation: " + path);
+        
+      });
       bot.push({
-        title: newTitle,
+        title: newTitles,
         conversations: [],
       });
-      return newTitle;
+      return newTitles;
     }
 }
 
@@ -144,9 +211,6 @@ export async function updateChatbot(title, newMessage) {
 
   const botObj = bot.find((b) => b.title === title);
   console.log(botObj);
-
-  // previous if(botObj && UID)
-
   if (botObj) {
     botObj.conversations.push(newMessage);
     console.log(
@@ -179,26 +243,20 @@ export async function updateChatbot(title, newMessage) {
 }
 
 export async function retrieveTitles() {
-  // var titles = [];
-  // bot.forEach((b) => titles.push(b.title));
-
-  // if (UID) {
-  //   const fileRef = ref(storage, "collections/" + UID + ".json");
-
-  //   try {
-  //     alert("In Retrieve Titles function called");
-  //     const url = await getDownloadURL(fileRef);
-  //     const response = await fetch(url);
-  //     const data = await response.json();
-  //     console.log(data);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // } else {
-  // alert("NO UID in retrieve Titles");
-  var titles = [];
-  bot.forEach((b) => titles.push(b.title));
-  return Array.isArray(titles) ? titles : [];
+  let getAllTitles = [];
+  console.log("UID: " + UID);
+  console.log("Display Name:" + displayName);
+  console.log("Email: " + email);
+  const userFolder = ref(storage, "collections/" + UID);
+  await listAll(userFolder).then((res)=>{
+    res.items.forEach((itemRef) => {
+      console.log("All Items: " + itemRef.name);
+      getAllTitles.push(itemRef.name);
+    });
+  }
+  );
+  console.log("Titles: " + getAllTitles);
+  return getAllTitles;
 }
 
 //Format of sending data

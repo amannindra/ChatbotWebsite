@@ -14,7 +14,12 @@ import {
   addChatbot,
   updateChatbot,
   getLatestUserMessage,
-  getLatestModelMessage
+  getLatestModelMessage,
+  checkIfUserIsPresent,
+  getUserId,
+  getUserPhoto,
+  getDisplayName,
+  getEmail,
 } from "../../Conversations/conversation.js";
 import { useAuthState } from "react-firebase-hooks/auth";
 
@@ -24,6 +29,7 @@ function Chat(props) {
   const [chatHistory, setChatHistory] = useState([]); 
   const chatContainerRef = useRef(null);
   const textareaRef = useRef(null);
+  var user = "./Images/user.png";
 
   useEffect(() => {
     const textarea = textareaRef.current;
@@ -39,12 +45,14 @@ function Chat(props) {
   }, []);
 
   const handleSend = async () => {
+    getUserId().then((res) => console.log(res));
     if (!props.isSignedIn) {
+      user = getUserPhoto();
       alert("Please sign in Chat.jsx");
       setuserText("");
       return;
     }
-
+    
     if (userText.trim() === "") {
       return;
     }
@@ -84,7 +92,7 @@ function Chat(props) {
       console.log("Not updating the currentConversation");
     }
   }, [props.currentConversation]);
-  
+
   return (
     
     <div className="center">
@@ -101,7 +109,7 @@ function Chat(props) {
                 </div>
               ) : (
                 <div className="user">
-                  <img src={User} />
+                  <img src={user} />
                   <Markdown className="fixrow">
                     {message.parts[0].text}
                   </Markdown>

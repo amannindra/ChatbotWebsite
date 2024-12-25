@@ -13,7 +13,6 @@ import {
 function assist(props) {
   const [assistanimation, setAssistanimation] = useState(false);
   const [titles, setTitles] = useState([]);
-  const userID = getUserId();
 
   const animation = () => {
     setAssistanimation(!assistanimation);
@@ -22,20 +21,28 @@ function assist(props) {
     sidebar.style.width = activeTab ? "0" : "15rem";
   };
 
-  useEffect(() => {
-    // const userID = getUserId();
-    // if (userID) {
-    //   var tit = retrieveTitles();
-    //   console.log(tit);
-    //   setTitles(tit);
-    // }
-    // alert("assist.jsx");
-    // console.log("titles are received");
-    var tit = retrieveTitles();
-    tit.then(function(result){
-      setTitles((prev) => [...result]);
-    })
-  }, []);
+  // useEffect(() => {
+  //   // const userID = getUserId();
+  //   // if (userID) {
+  //   //   var tit = retrieveTitles();
+  //   //   console.log(tit);
+  //   //   setTitles(tit);
+  //   // }
+  //   // alert("assist.jsx");
+  //   // console.log("titles are received");
+  //   if (props.isSignedIn){
+  //     console.log("User is signedIn");
+  //     var tit = retrieveTitles();
+  //     tit.then(function(result){
+  //     setTitles((prev) => [...result]);
+  //   })
+  //   }
+  //   else{
+  //       console.log("(useEffect, assist.jsx) User is not signed In");
+  //   }
+
+    
+  // }, []);
 
   useEffect(() => {
     // const userID = getUserId();
@@ -47,10 +54,15 @@ function assist(props) {
     // }
     // alert("assist.jsx 2nd");
 
-    var tit = retrieveTitles();
-    tit.then(function(result){
+    if(props.isSignedIn){
+      var tit = retrieveTitles();
+      tit.then(function(result){
       setTitles(result);
     })
+    }else{
+      console.log(  "User is not signedin");
+    }
+    
 
   }, [props.currentConversation]);
 
@@ -60,12 +72,12 @@ function assist(props) {
   };
 
   const newConvervation = async () => {
-    if(!props.isSignedIn){
+    if(props.isSignedIn){
       var tit  = await addChatbot();
       setTitles([...titles, tit]);
     }
     else{
-      console.log("You need to sign in!!  ")
+      console.log("You need to sign in!! " + JSON.stringify(props.isSignedIn))
     } 
   };
 
