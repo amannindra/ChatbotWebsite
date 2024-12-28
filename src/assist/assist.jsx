@@ -9,10 +9,12 @@ import {
   getUserId,
   addChatbot,
 } from "../Conversations/conversation.js";
+import { use } from "react";
 
 function assist(props) {
   const [assistanimation, setAssistanimation] = useState(false);
   const [titles, setTitles] = useState([]);
+  const [scrollWheel, setScrollWheel] = useState(true);
 
   const animation = () => {
     setAssistanimation(!assistanimation);
@@ -21,53 +23,28 @@ function assist(props) {
     sidebar.style.width = activeTab ? "0" : "15rem";
   };
 
-  // useEffect(() => {
-  //   // const userID = getUserId();
-  //   // if (userID) {
-  //   //   var tit = retrieveTitles();
-  //   //   console.log(tit);
-  //   //   setTitles(tit);
-  //   // }
-  //   // alert("assist.jsx");
-  //   // console.log("titles are received");
-  //   if (props.isSignedIn){
-  //     console.log("User is signedIn");
-  //     var tit = retrieveTitles();
-  //     tit.then(function(result){
-  //     setTitles((prev) => [...result]);
-  //   })
-  //   }
-  //   else{
-  //       console.log("(useEffect, assist.jsx) User is not signed In");
-  //   }
-
-    
-  // }, []);
 
   useEffect(() => {
-    // const userID = getUserId();
-
-    // if (userID) {
-    //   var tit = retrieveTitles();
-    //   console.log(tit);
-    //   setTitles(tit);
-    // }
-    // alert("assist.jsx 2nd");
-
     if(props.isSignedIn){
       var tit = retrieveTitles();
       tit.then(function(result){
+        if(result.length > 10){
+          setScrollWheel(true);
+          
+        }
+        else{
+          setScrollWheel(false);
+        }
       setTitles(result);
     })
     }else{
-      console.log(  "User is not signedin");
+      console.log("User is not signedin");
     }
     
 
-  }, [props.currentConversation]);
+  }, [props.currentConversation, props.isSignedIn]);
 
   const updateCurrentConv = (miniTitle) => {
-    // console.log(`putConversation: ${miniTitle}`);
     props.setCurrentConversation(miniTitle);
   };
 
@@ -92,6 +69,7 @@ function assist(props) {
           >
             <img src={Add} alt="Add" />
             <p>Add new Chat</p>
+            
           </div>
 
           <p id="title_text">Recent</p>
@@ -104,6 +82,7 @@ function assist(props) {
                   onClick={() => updateCurrentConv(message)}
                 >
                   <p>{message}</p>
+                  
                 </div>
               );
             })}

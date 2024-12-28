@@ -13,8 +13,6 @@ import {
   getChatbot,
   addChatbot,
   updateChatbot,
-  getLatestUserMessage,
-  getLatestModelMessage,
   checkIfUserIsPresent,
   getUserId,
   getUserPhoto,
@@ -24,11 +22,12 @@ import {
 import { useAuthState } from "react-firebase-hooks/auth";
 
 function Chat(props) {
-  const [conversationId, setConverationId] = useState(null);
   const [userText, setuserText] = useState("");
   const [chatHistory, setChatHistory] = useState([]); 
-  const chatContainerRef = useRef(null);
   const textareaRef = useRef(null);
+  const messagesEndRef  = useRef(null);
+
+
   var user = "./Images/user.png";
 
   useEffect(() => {
@@ -44,8 +43,12 @@ function Chat(props) {
     };
   }, []);
 
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chatHistory]);
+
   const handleSend = async () => {
-    getUserId().then((res) => console.log(res));
     if (!props.isSignedIn) {
       user = getUserPhoto();
       alert("Please sign in Chat.jsx");
@@ -56,7 +59,6 @@ function Chat(props) {
     if (userText.trim() === "") {
       return;
     }
-    var conv2;
 
     if (!props.currentConversation) {
       console.log("There isn't a current conversation");
@@ -64,7 +66,6 @@ function Chat(props) {
       props.setCurrentConversation(newConvervation);
       console.log(`updated props.currentConversation: ${props.currentConversation}`);
       await handleAI(newConvervation);
-
       
     } else {
       console.log("CURRENT conversation");
@@ -72,29 +73,42 @@ function Chat(props) {
 
     }
     setuserText("");
+    // await summarize();
+
   };
 
-  const summarize = ()=>{
-    console.log("Summarize: " + JSON.stringify(getChatbot(props.currentConversation)));
+  const summarize = async ()=>{
+    console.log("getChatBot to Summarize: " + JSON.stringify(await getChatbot(props.currentConversation)));
   }
 
   const handleAI = async (conversationTitle) => {
-    await getResponce(conversationTitle, userText);
+    const ai = await getResponce(conversationTitle, userText);
+    const userInput = {
+      role: "user",
+      parts: [{ text: userText }],
+    };
+
+    const modelInput = {
+      role: "model",
+      parts: [{ text: ai }],
+    };
+    setChatHistory((prev) => [...prev, userInput, modelInput]);
   };
 
-  //Get the AI responce, and then the backend update reponse.
   useEffect(() => {
     if(props.currentConversation){
-      var conv = getChatbot(props.currentConversation);
+      (async () => {
+      var conv = await getChatbot(props.currentConversation);
+      // console.log("getChatbot to useEffect: " + JSON.stringify(conv));
       setChatHistory(conv);
-    }
+    
+    })()}
     else{
       console.log("Not updating the currentConversation");
     }
   }, [props.currentConversation]);
 
   return (
-    
     <div className="center">
       <div className="chat">
         <div className="chatText">
@@ -117,6 +131,7 @@ function Chat(props) {
               )}
             </div>
           ))}
+          <div ref = {messagesEndRef}/>
         </div>
       </div>
       <div className="user_input">

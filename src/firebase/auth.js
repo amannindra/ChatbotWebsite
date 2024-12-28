@@ -13,7 +13,6 @@ export const doSignInWithGoogle = async () => {
   console.log("Signing in with Google...");
   const provider = new GoogleAuthProvider(auth);
   const result = await signInWithPopup(auth, provider);
-  console.log("Reached");
   //Save to firestore later
   // console.log(`Results: ${result.user}`);
   return result;
