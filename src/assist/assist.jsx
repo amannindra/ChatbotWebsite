@@ -9,11 +9,12 @@ import {
   getUserId,
   addChatbot,
 } from "../Conversations/conversation.js";
+import { use } from "react";
 
 function assist(props) {
   const [assistanimation, setAssistanimation] = useState(false);
   const [titles, setTitles] = useState([]);
-  const userID = getUserId();
+  const [scrollWheel, setScrollWheel] = useState(true);
 
   const animation = () => {
     setAssistanimation(!assistanimation);
@@ -22,50 +23,38 @@ function assist(props) {
     sidebar.style.width = activeTab ? "0" : "15rem";
   };
 
-  useEffect(() => {
-    // const userID = getUserId();
-    // if (userID) {
-    //   var tit = retrieveTitles();
-    //   console.log(tit);
-    //   setTitles(tit);
-    // }
-    // alert("assist.jsx");
-    // console.log("titles are received");
-    var tit = retrieveTitles();
-    tit.then(function(result){
-      setTitles((prev) => [...result]);
-    })
-  }, []);
 
   useEffect(() => {
-    // const userID = getUserId();
-
-    // if (userID) {
-    //   var tit = retrieveTitles();
-    //   console.log(tit);
-    //   setTitles(tit);
-    // }
-    // alert("assist.jsx 2nd");
-
-    var tit = retrieveTitles();
-    tit.then(function(result){
+    if(props.isSignedIn){
+      var tit = retrieveTitles();
+      tit.then(function(result){
+        if(result.length > 10){
+          setScrollWheel(true);
+          
+        }
+        else{
+          setScrollWheel(false);
+        }
       setTitles(result);
     })
+    }else{
+      console.log("User is not signedin");
+    }
+    
 
-  }, [props.currentConversation]);
+  }, [props.currentConversation, props.isSignedIn]);
 
   const updateCurrentConv = (miniTitle) => {
-    // console.log(`putConversation: ${miniTitle}`);
     props.setCurrentConversation(miniTitle);
   };
 
   const newConvervation = async () => {
-    if(!props.isSignedIn){
+    if(props.isSignedIn){
       var tit  = await addChatbot();
       setTitles([...titles, tit]);
     }
     else{
-      console.log("You need to sign in!!  ")
+      console.log("You need to sign in!! " + JSON.stringify(props.isSignedIn))
     } 
   };
 
@@ -80,6 +69,7 @@ function assist(props) {
           >
             <img src={Add} alt="Add" />
             <p>Add new Chat</p>
+            
           </div>
 
           <p id="title_text">Recent</p>
@@ -92,6 +82,7 @@ function assist(props) {
                   onClick={() => updateCurrentConv(message)}
                 >
                   <p>{message}</p>
+                  
                 </div>
               );
             })}

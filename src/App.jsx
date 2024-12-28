@@ -18,6 +18,8 @@ function App() {
         <Assist
           currentConversation={currentConversation}
           setCurrentConversation={setCurrentConversation}
+          isSignedIn={isSignedIn}
+          setIsSignedIn={setIsSignedIn}
         />
         <Main
           currentConversation={currentConversation}

@@ -6,7 +6,8 @@
   align-items: center;
   flex-direction: column;
   gap: 2rem;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   transition: width 0.5s ease-in-out;
 
   .aboveChat {
@@ -27,8 +28,9 @@
     .section {
       display: flex;
       flex-direction: column;
-
       gap: 0.5rem;
+      max-height: 75vh;
+      overflow-y: auto;
     }
   }
 }
@@ -49,7 +51,6 @@
   padding-bottom: 0.5rem;
   border-radius: 10px;
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
   background-color: #131314;
   font-size: 0.75rem;
@@ -72,4 +73,10 @@
     border-radius: 50%;
     background-color: white;
   }
+  
 }
+#delete {
+  color: red;
+  font-size: 1rem;
+}  
+
