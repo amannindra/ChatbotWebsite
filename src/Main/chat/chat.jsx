@@ -153,7 +153,6 @@ function Chat(props) {
           <img src={Photo} />
         </div>
       </div>
-
     </div>
   );
 }
