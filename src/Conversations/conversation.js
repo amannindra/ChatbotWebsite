@@ -1,5 +1,5 @@
 import { app } from "../firebase/FireBase";
-import { getDownloadURL, getStorage, ref, uploadBytes, listAll } from "firebase/storage";
+import { getDownloadURL, getStorage, ref, uploadBytes, listAll, deleteObject } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import {
   getFirestore,
@@ -31,10 +31,13 @@ export async function getEmail(){
 
 export async function deleteConveration(title){
   const storageRef = ref(storage, "collections/" + UID + "/" + title);
+  console.log("Deleting the conversation: " + title);
   deleteObject(storageRef).then(() => {
     console.log("Deleted the conversation: " + title);
+    
   }).catch((error) => {
     console.error(error);
+    alert("Error deleting the conversation: " + title);
   });
 }
 

@@ -8,6 +8,7 @@ import {
   getChatbot,
   getUserId,
   addChatbot,
+  deleteConveration
 } from "../Conversations/conversation.js";
 import { use } from "react";
 
@@ -26,11 +27,7 @@ function assist(props) {
     if (props.isSignedIn) {
       var tit = retrieveTitles();
       tit.then(function (result) {
-        if (result.length > 10) {
-          setScrollWheel(true);
-        } else {
-          setScrollWheel(false);
-        }
+      
         setTitles(result);
       });
     } else {
@@ -52,8 +49,13 @@ function assist(props) {
   };
 
   const deleteContent = async (miniTitle) => {
-    alert("Content Deleted: " + miniTitle);
+    deleteConveration(miniTitle);
+    var tit = retrieveTitles();
+    tit.then(function (result) {
+      setTitles(result);
+    });
   };
+
 
   return (
     <>
