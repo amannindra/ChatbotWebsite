@@ -127,7 +127,7 @@ export async function addChatbot() {
       const path = "collections/" + UID + "/" + "conversation 1";
       const storageRef = ref(storage, path);
       await uploadBytes(storageRef, new Blob([JSON.stringify([])], {type: "application/json"}))
-      .then((snapshot) => {
+      .then((snapshot) => { 
         console.log("Uploaded the first conversation: " + path);
       
       });

@@ -1,5 +1,5 @@
 specVersion: "v1beta"
-serviceId: "ChatBotWebsite"
+serviceId: "ChatbotWebsite"
 location: "us-central1"
 schema:
   source: "./schema"
@@ -7,6 +7,6 @@ schema:
     postgresql:
       database: "fdcdb"
       cloudSql:
-        instanceId: "ChatBotWebsite-fdc"
+        instanceId: "ChatbotWebsite-fdc"
       # schemaValidation: "COMPATIBLE"
 connectorDirs: ["./connector"]
