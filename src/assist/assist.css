@@ -61,6 +61,11 @@
   justify-content: space-between;
   align-items: center;
 }
+.fade{
+  -webkit-mask-image: linear-gradient(to right, rgb(255, 0, 0) 100%, transparent);
+
+}
+
 .each_section:hover {
   background-color: #3c3c3cab;
 }

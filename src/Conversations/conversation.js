@@ -152,6 +152,42 @@ export async function addChatbot() {
     }
 }
 
+function generateUUID() { // Public Domain/MIT
+  var d = new Date().getTime();//Timestamp
+  var d2 = ((typeof performance !== 'undefined') && performance.now && (performance.now()*1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16;//random number between 0 and 16
+      if(d > 0){//Use timestamp until depleted
+          r = (d + r)%16 | 0;
+          d = Math.floor(d/16);
+      } else {//Use microseconds since page-load if supported
+          r = (d2 + r)%16 | 0;
+          d2 = Math.floor(d2/16);
+      }
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+}
+
+export async function addChatbot2() {
+
+  const timestamp = new Date().toISOString().replace(/[-:.]/g, "");
+
+  // displayName = generateUUID();
+
+  const path = `collections/${UID}/${timestamp}`;
+  const storageRef = ref(storage, path);
+
+  await uploadBytes(storageRef, new Blob([JSON.stringify([])], { type: "application/json" }))
+    .then(() => {
+      console.log("Uploaded a new conversation: " + path);
+    })
+    .catch((error) => {
+      console.error("Error uploading conversation: ", error);
+    });
+
+  return timestamp;
+}
+
 export async function updateChatbot(title, userMessage, modelMessage) {
   var converation = await getChatbot(title);
   console.log("(getChatbot to updateChatbot): " + converation);
@@ -170,5 +206,6 @@ export async function retrieveTitles() {
     });
   }
   );
+  getAllTitles.sort((a, b) => b.localeCompare(a));
   return getAllTitles;
 }

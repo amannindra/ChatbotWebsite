@@ -7,7 +7,7 @@ import {
   retrieveTitles,
   getChatbot,
   getUserId,
-  addChatbot,
+  addChatbot2,
   deleteConveration
 } from "../Conversations/conversation.js";
 import { use } from "react";
@@ -41,7 +41,7 @@ function assist(props) {
 
   const newConvervation = async () => {
     if (props.isSignedIn) {
-      var tit = await addChatbot();
+      var tit = await addChatbot2();
       setTitles([...titles, tit]);
     } else {
       console.log("You need to sign in!! " + JSON.stringify(props.isSignedIn));
@@ -79,7 +79,7 @@ function assist(props) {
           key={index}
           onClick={() => updateCurrentConv(message)}
         >
-  <p>{message}</p>
+          <p className="fade">{message}</p>
           <a
             className="close"
             onClick={(e) => {

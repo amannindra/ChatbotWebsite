@@ -11,7 +11,7 @@ import {
   retrieveTitles,
   getResponce,
   getChatbot,
-  addChatbot,
+  addChatbot2,
   updateChatbot,
   checkIfUserIsPresent,
   getUserId,
@@ -26,7 +26,6 @@ function Chat(props) {
   const [chatHistory, setChatHistory] = useState([]); 
   const textareaRef = useRef(null);
   const messagesEndRef  = useRef(null);
-
 
   var user = "./Images/user.png";
 
