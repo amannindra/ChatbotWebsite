@@ -1,5 +1,8 @@
 import { app } from "../firebase/FireBase";
-import { getDownloadURL, getStorage, ref, uploadBytes, listAll, deleteObject } from "firebase/storage";
+// import { getDownloadURL, getStorage, ref, uploadBytes, listAll, deleteObject } from "firebase/storage";
+
+import { getDatabase, ref, set } from "firebase/database";
+
 import { v4 as uuidv4 } from "uuid";
 import {
   getFirestore,
@@ -37,7 +40,7 @@ export async function deleteConveration(title){
     
   }).catch((error) => {
     console.error(error);
-    alert("Error deleting the conversation: " + title);
+    // alert("Error deleting the conversation: " + title);
   });
 }
 
@@ -59,11 +62,15 @@ export async function checkIfUserIsPresent(){
 }
 
 export async function uploadSignInData(data) {
-  SignedInData = data;
-  UID = data.uid;
-  displayName = data.displayName;
-  email = data.email;
-  userPhoto = data.photoURL;
+
+  const db = getDatabase();
+
+  set(ref(db, "users/" + data.uid), {
+    displayName: data.displayName,
+    email: data.email,
+    photoURL: data.photoURL,
+
+  })
 }
 
 export async function getResponce(title, userText) {
@@ -105,6 +112,13 @@ export async function getResponce(title, userText) {
     alert("Gemini Error");
   }
 }
+
+
+
+
+
+
+
 
 export async function getChatbot(title) {
   try{
@@ -170,23 +184,42 @@ function generateUUID() { // Public Domain/MIT
 
 export async function addChatbot2() {
 
-  const timestamp = new Date().toISOString().replace(/[-:.]/g, "");
+  if(UID){
+    var currentTitles = await retrieveTitles();
 
-  // displayName = generateUUID();
+    const timestamp = new Date().toISOString();
 
-  const path = `collections/${UID}/${timestamp}`;
-  const storageRef = ref(storage, path);
+    // displayName = generateUUID();
 
-  await uploadBytes(storageRef, new Blob([JSON.stringify([])], { type: "application/json" }))
-    .then(() => {
-      console.log("Uploaded a new conversation: " + path);
-    })
-    .catch((error) => {
-      console.error("Error uploading conversation: ", error);
-    });
+    const path = `collections/${UID}/${timestamp}`;
+    const storageRef = ref(storage, path);
 
-  return timestamp;
+    await uploadBytes(storageRef, new Blob([JSON.stringify([])], { type: "application/json" }))
+      .then(() => {
+        console.log("Uploaded a new conversation: " + path);
+      })
+      .catch((error) => {
+        console.error("Error uploading conversation: ", error);
+      });
+
+    return timestamp;
+  }
+  console.log("User is not signed in");
 }
+
+export async function addChatbot3() {
+  if(UID){
+    const timestamps = new Date().toISOString();
+
+    path = `collections/${UID}/${timestamps}`;
+
+
+
+  }
+}
+
+
+
 
 export async function updateChatbot(title, userMessage, modelMessage) {
   var converation = await getChatbot(title);

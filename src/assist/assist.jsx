@@ -42,7 +42,7 @@ function assist(props) {
   const newConvervation = async () => {
     if (props.isSignedIn) {
       var tit = await addChatbot2();
-      setTitles([...titles, tit]);
+      setTitles([tit, ...titles]);
     } else {
       console.log("You need to sign in!! " + JSON.stringify(props.isSignedIn));
     }
