@@ -1,7 +1,7 @@
 import { app } from "../firebase/FireBase";
 // import { getDownloadURL, getStorage, ref, uploadBytes, listAll, deleteObject } from "firebase/storage";
 
-import { getDatabase, ref, set } from "firebase/database";
+import { getDatabase, ref, set, onValue } from "firebase/database";
 
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -15,6 +15,8 @@ var UID;
 var userPhoto;
 
 const storage = getStorage(app);
+
+const database = getDatabase(app);
 
 export async function getUserId() {
   return UID;
@@ -115,11 +117,6 @@ export async function getResponce(title, userText) {
 
 
 
-
-
-
-
-
 export async function getChatbot(title) {
   try{
     const storageRef = ref(storage, "collections/" + UID + "/" + title);
@@ -134,53 +131,7 @@ export async function getChatbot(title) {
   }
  
 } 
-export async function addChatbot() {
-  var currentTitles = await retrieveTitles();
-    console.log("Current Titles: " + currentTitles);
-    if (currentTitles.length == 0 && UID) {
-      const path = "collections/" + UID + "/" + "conversation 1";
-      const storageRef = ref(storage, path);
-      await uploadBytes(storageRef, new Blob([JSON.stringify([])], {type: "application/json"}))
-      .then((snapshot) => { 
-        console.log("Uploaded the first conversation: " + path);
-      
-      });
-      return "conversation 1";
-    }
-    else{ 
-      if(!UID){
-        console.log("(addchatbot) User is not signed in");
-        return;
-      }
-      console.log("Conversation found!!");
-      var newTitles = "conversation " + (currentTitles.length + 1);
-      // alert("New Title and UID: " + newTitles, UID);
-      const path = "collections/" + UID + "/" + newTitles;
-      const storageRef = ref(storage, path);
-      await uploadBytes(storageRef, new Blob([JSON.stringify([])], {type: "application/json"}))
-      .then((snapshot) => {
-        console.log("Uploaded a new conversation: " + path);
-        
-      });
-      return newTitles;
-    }
-}
 
-function generateUUID() { // Public Domain/MIT
-  var d = new Date().getTime();//Timestamp
-  var d2 = ((typeof performance !== 'undefined') && performance.now && (performance.now()*1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = Math.random() * 16;//random number between 0 and 16
-      if(d > 0){//Use timestamp until depleted
-          r = (d + r)%16 | 0;
-          d = Math.floor(d/16);
-      } else {//Use microseconds since page-load if supported
-          r = (d2 + r)%16 | 0;
-          d2 = Math.floor(d2/16);
-      }
-      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-  });
-}
 
 export async function addChatbot2() {
 
@@ -211,7 +162,15 @@ export async function addChatbot3() {
   if(UID){
     const timestamps = new Date().toISOString();
 
-    path = `collections/${UID}/${timestamps}`;
+    const path = `collections/${UID}/`;
+
+
+
+
+
+
+
+
 
 
 
@@ -241,4 +200,38 @@ export async function retrieveTitles() {
   );
   getAllTitles.sort((a, b) => b.localeCompare(a));
   return getAllTitles;
+}
+
+
+
+export async function addChatbot() {
+  var currentTitles = await retrieveTitles();
+    console.log("Current Titles: " + currentTitles);
+    if (currentTitles.length == 0 && UID) {
+      const path = "collections/" + UID + "/" + "conversation 1";
+      const storageRef = ref(storage, path);
+      await uploadBytes(storageRef, new Blob([JSON.stringify([])], {type: "application/json"}))
+      .then((snapshot) => { 
+        console.log("Uploaded the first conversation: " + path);
+      
+      });
+      return "conversation 1";
+    }
+    else{ 
+      if(!UID){
+        console.log("(addchatbot) User is not signed in");
+        return;
+      }
+      console.log("Conversation found!!");
+      var newTitles = "conversation " + (currentTitles.length + 1);
+      // alert("New Title and UID: " + newTitles, UID);
+      const path = "collections/" + UID + "/" + newTitles;
+      const storageRef = ref(storage, path);
+      await uploadBytes(storageRef, new Blob([JSON.stringify([])], {type: "application/json"}))
+      .then((snapshot) => {
+        console.log("Uploaded a new conversation: " + path);
+        
+      });
+      return newTitles;
+    }
 }
