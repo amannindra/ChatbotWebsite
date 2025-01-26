@@ -7,8 +7,8 @@ import {
   retrieveTitles,
   getChatbot,
   getUserId,
-  addChatbot2,
-  deleteConveration
+  addChatbot3,
+  // deleteConveration
 } from "../Conversations/conversation.js";
 import { use } from "react";
 
@@ -41,7 +41,7 @@ function assist(props) {
 
   const newConvervation = async () => {
     if (props.isSignedIn) {
-      var tit = await addChatbot2();
+      var tit = await addChatbot3();
       setTitles([tit, ...titles]);
     } else {
       console.log("You need to sign in!! " + JSON.stringify(props.isSignedIn));
@@ -49,7 +49,7 @@ function assist(props) {
   };
 
   const deleteContent = async (miniTitle) => {
-    deleteConveration(miniTitle);
+    // deleteConveration(miniTitle);
     var tit = retrieveTitles();
     tit.then(function (result) {
       setTitles(result);

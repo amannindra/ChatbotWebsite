@@ -13,7 +13,7 @@ import {
   getChatbot,
   addChatbot2,
   updateChatbot,
-  checkIfUserIsPresent,
+  // checkIfUserIsPresent,
   getUserId,
   getUserPhoto,
   getDisplayName,
