@@ -26,8 +26,11 @@ function assist(props) {
   useEffect(() => {
     if (props.isSignedIn) {
       var tit = retrieveTitles();
+
+
+
       tit.then(function (result) {
-      
+        console.log("useEffect Titles: " + result);
         setTitles(result);
       });
     } else {

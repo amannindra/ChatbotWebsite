@@ -21,11 +21,9 @@ const database = getDatabase(app);
 export async function getUserId() {
   return UID;
 }
-
 export async function getUserPhoto(){
   return userPhoto;
 }
-
 export async function getDisplayName(){
   return displayName;
 }
@@ -33,45 +31,45 @@ export async function getEmail(){
   return email;
 }
 
+async function getUserExists(uid){
+  const db = getDatabase();
+  get(child(ref(db), `/users/`)).then((snapshot) => {
+    if (snapshot.exists()) {
+      return Object.keys(snapshot.val()).includes(uid);
+    }
+  }).catch((error) => {
+    console.error(error);
+    return false;
+  });
 
-// export async function deleteConveration(title){
-//   const storageRef = ref(storage, "collections/" + UID + "/" + title);
-//   console.log("Deleting the conversation: " + title);
-//   deleteObject(storageRef).then(() => {
-//     console.log("Deleted the conversation: " + title);
-    
-//   }).catch((error) => {
-//     console.error(error);
-//     // alert("Error deleting the conversation: " + title);
-//   });
-// }
+  return false;
 
-// export async function checkIfUserIsPresent(){
-//   console.log("Checking if user is present");
-//   const userFolder = ref(storage, "collections");
+}
 
-//   listAll(userFolder).then((res)=>
-//   {
-//     res.prefixes. forEach((folderRef) => {
-//       if(folderRef.name == UID){
-//         return true;
-//       }
-//     });  
-//   }).catch((error) => {
-//     console.error(error);
-//   });
-//   return false;
-// }
 
 export async function uploadSignInData(data) {
 
   const db = getDatabase();
 
-  set(ref(db, "users/" + data.uid), {
-    displayName: data.displayName,
-    email: data.email,
-    photoURL: data.photoURL,
-  })
+  const userDataBase = {};
+
+  if(!getUserExists(data.uid)){
+    console.log("User doesn't exists");
+    userDataBase[`/users/${data.uid}`] = {
+      displayName: data.displayName,
+      email: data.email,
+      photoURL: data.photoURL,
+    };
+
+    update(ref(db), userDataBase)
+    .then(() => {
+      console.log("User data uploaded successfully!");
+    }).catch((error) => {
+      console.error("Error uploading user data from userSignIn: ", error);
+    });
+  }
+
+
  SignedInData = data;
  displayName = data.displayName;
  email = data.email;
@@ -121,8 +119,6 @@ export async function getResponce(title, userText) {
   }
 }
 
-
-
 export async function getChatbot(title) {
   try{
     const storageRef = ref(storage, "collections/" + UID + "/" + title);
@@ -149,85 +145,62 @@ export async function getChatBot2(title) {
   }).catch((error) => {
     console.error(error);
   });
-
-
 }
 
-
-
-export async function addChatbot2() {
-
-  if(UID){
-    var currentTitles = await retrieveTitles();
-
-    const timestamp = new Date().toISOString();
-
-    // displayName = generateUUID();
-
-    const path = `collections/${UID}/${timestamp}`;
-    const storageRef = ref(storage, path);
-
-    await uploadBytes(storageRef, new Blob([JSON.stringify([])], { type: "application/json" }))
-      .then(() => {
-        console.log("Uploaded a new conversation: " + path);
-      })
-      .catch((error) => {
-        console.error("Error uploading conversation: ", error);
-      });
-
-    return timestamp;
-  }
-  console.log("User is not signed in");
-}
 
 export async function addChatbot3() {
-  // if(UID){
-  //   const timestamps = new Date().toISOString();
-  //   const db = getDatabase();
-  //   const path = `collections/${UID}/`;
-
-  //   const postEntry = {
-  //     author : "Aman",
-  //     uid: UID,
-  //     body: "Body",
-  //     title: "title",
-  //     starCount: 0,
-  //     authorPic: "picture"
-  //   }
-
-  //   const newPostKey = push(child(ref(db), 'posts')).key;
-    
-  //   const updates = {};
-  //   updates['/chats/' + newPostKey] = postEntry;
-  //   updates['/user-posts/' + UID + '/' + newPostKey] = postEntry;
-  //   return timestamps
-  // }
-  // else{
-  //   console.log("User is not signed in: " + UID);
-  // }
-    const timestamps = new Date().toISOString();
+    const timestamps = Date.now();
     const db = getDatabase();
-   
-    set(ref(db, '/chats'), { 
 
-      
+    const serialNumber = uuidv4(); 
+    const messageSerialNumber = uuidv4();
 
+    console.log("Serial Number: " + serialNumber);
 
-      title: "New Chat Title",
-      message: "This is the latest message!",
-      timestamp: timestamps
-    })
+    const updateConversationInUser = {};
+    updateConversationInUser[`/users/${UID}/conversations/${serialNumber}`] = true;
+
+    update(ref(db), updateConversationInUser)
     .then(() => {
-      console.log("Chat message appended successfully!");
+      console.log("User conversation appended successfully!");
+    })
+    .catch((error) => {
+      console.error("Error appending conversation:", error);
+    });
+
+
+    const updateConversation = {};
+
+    updateConversation[`/conversations/${serialNumber}`] = {title: "New Chat Title",
+      timestamp: timestamps,
+      userId: UID,
+      lastMessage: "This is the latest message!"
+    };
+
+    update(ref(db), updateConversation)
+    .then(() => {
+      console.log("Conversation title  appended successfully!");
     })
     .catch((error) => {
       console.error("Error appending chat message: ", error);
     });
+
+    const updateMessageInConversation = {};
+
+    updateMessageInConversation[`/messages/${serialNumber}/${messageSerialNumber}`] = {  
+      role: "user",
+      text: "Hello, I am a user!",
+      timestamp: timestamps
+    };
+
+    update(ref(db), updateMessageInConversation)
+    .then(() => {
+      console.log("Chat message appended successfully!");
+    }).catch((error) => {
+      console.error("Error appending chat message: ", error);
+    });
     return timestamps
 }
-
-
-
 
 export async function updateChatbot(title, userMessage, modelMessage) {
   var converation = await getChatbot(title);
@@ -238,29 +211,33 @@ export async function updateChatbot(title, userMessage, modelMessage) {
   console.log("Uploaded the new conversation: " + title);
 }
 
+export async function updateChatbot2(title, userMessage, modelMessage) {
+
+}
+
 export async function retrieveTitles() {
-  let getAllTitles = [];
-  // const userFolder = ref(storage, "collections/" + UID);
-  // await listAll(userFolder).then((res)=>{
-  //   res.items.forEach((itemRef) => {
-  //     getAllTitles.push(itemRef.name);
-  //   });
-  // }
-  // );
-  const dbRef = ref(getDatabase());
-  get(child(dbRef, `chats`)).then((snapshot) => {
+  var getTitles = [];
+  const db = getDatabase();
+
+  await get(child(ref(db), `users/${UID}/conversations`)).then((snapshot) => {
     if (snapshot.exists()) {
-      console.log(snapshot.val());
-    } else {
+      console.log("Titles: " + Object.keys(snapshot.val()));
+      getTitles = (Object.keys(snapshot.val()));
+    }
+    else {
       console.log("No data available");
+  
     }
   }).catch((error) => {
     console.error(error);
+
   });
 
+  if(Array.isArray(getTitles)){
+    console.log("It is an array");
+  }
 
-  getAllTitles.sort((a, b) => b.localeCompare(a));
-  return getAllTitles;
+  return getTitles;
 }
 
 
@@ -301,3 +278,32 @@ export async function retrieveTitles() {
 //       return newTitles;
 //     }
 // }
+
+
+
+// export async function deleteConveration(title){
+//   const storageRef = ref(storage, "collections/" + UID + "/" + title);
+//   console.log("Deleting the conversation: " + title);
+//   deleteObject(storageRef).then(() => {
+//     console.log("Deleted the conversation: " + title);
+    
+//   }).catch((error) => {
+//     console.error(error);
+//     // alert("Error deleting the conversation: " + title);
+//   });
+// }
+
+// export async function checkIfUserIsPresent(){
+//   console.log("Checking if user is present");
+//   const userFolder = ref(storage, "collections");
+
+//   listAll(userFolder).then((res)=>
+//   {
+//     res.prefixes. forEach((folderRef) => {
+//       if(folderRef.name == UID){
+//         return true;
+//       }
+//     });  
+//   }).catch((error) => {
+//     console.error(error);
+//   });

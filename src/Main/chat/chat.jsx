@@ -11,7 +11,6 @@ import {
   retrieveTitles,
   getResponce,
   getChatbot,
-  addChatbot2,
   updateChatbot,
   // checkIfUserIsPresent,
   getUserId,
