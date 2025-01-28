@@ -216,28 +216,42 @@ export async function updateChatbot2(title, userMessage, modelMessage) {
 }
 
 export async function retrieveTitles() {
-  var getTitles = [];
   const db = getDatabase();
+  let conversationIds = [];
+  let titles = [];
 
-  await get(child(ref(db), `users/${UID}/conversations`)).then((snapshot) => {
+  // Step 1: Retrieve conversation IDs
+  try {
+    const snapshot = await get(child(ref(db), `users/${UID}/conversations`));
     if (snapshot.exists()) {
-      console.log("Titles: " + Object.keys(snapshot.val()));
-      getTitles = (Object.keys(snapshot.val()));
-    }
-    else {
+      conversationIds = Object.keys(snapshot.val()); // Get the conversation IDs
+      console.log("Conversation IDs:", conversationIds);
+    } else {
       console.log("No data available");
-  
+      return [];
     }
-  }).catch((error) => {
-    console.error(error);
-
-  });
-
-  if(Array.isArray(getTitles)){
-    console.log("It is an array");
+  } catch (error) {
+    console.error("Error fetching conversation IDs:", error);
+    return [];
   }
 
-  return getTitles;
+  // Step 2: Retrieve titles for each conversation ID
+  try {
+    for (const conversationId of conversationIds) {
+      const conversationSnapshot = await get(child(ref(db), `conversations/${conversationId}`));
+      if (conversationSnapshot.exists()) {
+        const title = conversationSnapshot.val().title; // Assuming 'title' is stored in the conversation object
+        titles.push(title);
+      } else {
+        console.log(`No data available for conversation ID: ${conversationId}`);
+      }
+    }
+  } catch (error) {
+    console.error("Error fetching conversation titles:", error);
+  }
+
+  console.log("Titles:", titles);
+  return titles; // Return the array of titles
 }
 
 
