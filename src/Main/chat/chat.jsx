@@ -22,9 +22,9 @@ import { useAuthState } from "react-firebase-hooks/auth";
 
 function Chat(props) {
   const [userText, setuserText] = useState("");
-  const [chatHistory, setChatHistory] = useState([]); 
+  const [chatHistory, setChatHistory] = useState([]);
   const textareaRef = useRef(null);
-  const messagesEndRef  = useRef(null);
+  const messagesEndRef = useRef(null);
 
   var user = "./Images/user.png";
 
@@ -41,9 +41,8 @@ function Chat(props) {
     };
   }, []);
 
-
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatHistory]);
 
   const handleSend = async () => {
@@ -53,34 +52,36 @@ function Chat(props) {
       setuserText("");
       return;
     }
-    
+
     if (userText.trim() === "") {
       return;
     }
 
     if (!props.currentConversation) {
       console.log("There isn't a current conversation");
-      let newConvervation = await addChatbot();
-      props.setCurrentConversation(newConvervation);
-      console.log(`updated props.currentConversation: ${props.currentConversation}`);
-      await handleAI(newConvervation);
-      
+      let newConvervationId = await addChatbot3();
+      props.setCurrentConversation(newConvervationId[0]);
+      console.log(
+        `updated props.currentConversation: ${props.currentConversation}`
+      );
+      await handleAI(newConvervationId);
     } else {
-      console.log("CURRENT conversation");
       await handleAI(props.currentConversation);
-
     }
     setuserText("");
     // await summarize();
-
   };
 
-  const summarize = async ()=>{
-    console.log("getChatBot to Summarize: " + JSON.stringify(await getChatbot(props.currentConversation)));
-  }
+  const summarize = async () => {
+    console.log(
+      "getChatBot to Summarize: " +
+        JSON.stringify(await getChatbot(props.currentConversation))
+    );
+  };
 
-  const handleAI = async (conversationTitle) => {
-    const ai = await getResponce(conversationTitle, userText);
+  const handleAI = async (conversationId) => {
+    const ai = await getResponce(conversationId, userText);
+  
     const userInput = {
       role: "user",
       parts: [{ text: userText }],
@@ -94,17 +95,22 @@ function Chat(props) {
   };
 
   useEffect(() => {
-    if(props.currentConversation){
-      (async () => {
-      var conv = await getChatbot(props.currentConversation);
-      // console.log("getChatbot to useEffect: " + JSON.stringify(conv));
-      setChatHistory(conv);
-    
-    })()}
-    else{
-      console.log("Not updating the currentConversation");
+    console.log("Updating in useEffect props.currentConversation: " + props.currentConversation);
+    if (props.currentConversation) {
+        console.log("in if statement");
+
+        (async () => {
+            console.log("in async statement");
+            var conv = await getChatbot(props.currentConversation);
+            console.log("getChatbot to useEffect: " + JSON.stringify(conv));
+            console.log("--------------------");
+            setChatHistory(conv);
+        })();  // <-- This calls the function immediately
+    } else {
+        console.log("Not updating the currentConversation");
     }
-  }, [props.currentConversation]);
+}, [props.currentConversation]);
+
 
   return (
     <div className="center">
@@ -129,7 +135,7 @@ function Chat(props) {
               )}
             </div>
           ))}
-          <div ref = {messagesEndRef}/>
+          <div ref={messagesEndRef} />
         </div>
       </div>
       <div className="user_input">

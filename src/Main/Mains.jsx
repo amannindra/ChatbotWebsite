@@ -5,14 +5,12 @@ import Tabs from "./Tabs/Tabs";
 import { useState } from "react";
 
 function Main(props) {
-
   return (
     <>
       <div className="Main">
         <Tabs
           isSignedIn={props.isSignedIn}
           setIsSignedIn={props.setIsSignedIn}
-          
         />
         <div className="chat-container">
           <Chat

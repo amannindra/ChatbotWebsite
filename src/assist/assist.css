@@ -61,9 +61,12 @@
   justify-content: space-between;
   align-items: center;
 }
-.fade{
-  -webkit-mask-image: linear-gradient(to right, rgb(255, 0, 0) 100%, transparent);
-
+.fade {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    rgb(255, 0, 0) 100%,
+    transparent
+  );
 }
 
 .each_section:hover {
@@ -81,7 +84,6 @@
     border-radius: 50%;
     background-color: white;
   }
-  
 }
 /* .close { 
   position: relative;
@@ -105,7 +107,7 @@
   transform: rotate(-45deg);
 } */
 
-.close:after{
+.close:after {
   display: inline-block;
   content: "\00d7";
   font-size: 1.5rem;
@@ -116,10 +118,7 @@
   border-radius: 50%;
   padding-left: 50%;
   padding-right: 50%;
-
 }
-.close:hover:after{
+.close:hover:after {
   opacity: 1;
-
 }
-
